@@ -4,32 +4,34 @@ $(function () {
     endTime: 17,
     list: []
   };
+  const todo = " ";
+  for (let i = 0; i <= defaultSchedule.endTime - defaultSchedule.startTime; i++) {
+    defaultSchedule.list.push(todo)
+  }
 
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  //load local storage
+  //load local storage and set the values of the corresponding textarea
   const saveSchedule = JSON.parse(localStorage.getItem("saveSchedule"));
   if (saveSchedule) {
-    defaultSchedule = saveSchedule;
+    $(saveSchedule.list).each(function(index) {
+      $('#' + (index + defaultSchedule.startTime)).children().eq(1).val(this)
+    })
   }
 
   //set the color of each time block
   let staticHour = dayjs().format('HH') * 1; //convert string to number
   function setColor() {
-    for (let i = staticHour - 1; i >= 0; i-- ) {
+    for (let i = staticHour - 1; i >= 0; i--) {
       $('#' + i).attr('data-tense', 'past');
     }
-    
+
     $('#' + staticHour).attr('data-tense', 'current');
-    
-    for (let i = staticHour + 1; i <= 23; i++ ) {
+
+    for (let i = staticHour + 1; i <= 23; i++) {
       $('#' + i).attr('data-tense', 'future');
     }
   }
   setColor();
-  
+
   //display current date/time and update color dynamically
   const currentDay = $('#currentDay').text(dayjs().format('MMM D, YYYY h:mm:ss a'));
   setInterval(function () {
@@ -43,13 +45,12 @@ $(function () {
     }
   }, 1000);
 
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
+  //add event-listener to save description in local storage
+  const saveBtn = $('.saveBtn');
+  saveBtn.on('click', function () {
+    defaultSchedule.list[$(this).parent().attr('id') - defaultSchedule.startTime] = $(this).parent().children().eq(1).val();
+    localStorage.setItem("saveSchedule", JSON.stringify(defaultSchedule));
+  })
 
   //function of slider
   $(function () {
@@ -74,5 +75,7 @@ $(function () {
 });
 
 // TODO: add function to display/hide time block
+
+// TODO: add listener to save all and clear all
 
 
