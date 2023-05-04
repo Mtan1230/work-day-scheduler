@@ -15,19 +15,32 @@ $(function () {
     defaultSchedule = saveSchedule;
   }
 
-  // TODO: need a function to initial the HTML
-  //
-
-  //display the current date and time dynamically in the header of the page.
+  //set the color of each time block
+  let staticHour = dayjs().format('HH') * 1; //convert string to number
+  function setColor() {
+    for (let i = staticHour - 1; i >= 0; i-- ) {
+      $('#' + i).attr('data-tense', 'past');
+    }
+    
+    $('#' + staticHour).attr('data-tense', 'current');
+    
+    for (let i = staticHour + 1; i <= 23; i++ ) {
+      $('#' + i).attr('data-tense', 'future');
+    }
+  }
+  setColor();
+  
+  //display current date/time and update color dynamically
   const currentDay = $('#currentDay').text(dayjs().format('MMM D, YYYY h:mm:ss a'));
   setInterval(function () {
     currentDay.text(dayjs().format('MMM D, YYYY h:mm:ss a'))
-    // TODO: Add code to apply the past, present, or future class to each time
-    // block by comparing the id to the current hour. HINTS: How can the id
-    // attribute of each time-block be used to conditionally add or remove the
-    // past, present, and future classes? How can Day.js be used to get the
-    // current hour in 24-hour time?
-    //
+
+    //when hour changes, re-set color
+    let dynamicHour = dayjs().format('HH') * 1;
+    if (dynamicHour !== staticHour) {
+      staticHour = dynamicHour;
+      setColor();
+    }
   }, 1000);
 
   // TODO: Add a listener for click events on the save button. This code should
@@ -43,7 +56,7 @@ $(function () {
     $("#slider-range").slider({
       range: true,
       min: 0,
-      max: 24,
+      max: 23,
       values: [defaultSchedule.startTime, defaultSchedule.endTime],
       slide: function (event, ui) {
         if (ui.values[0] == ui.values[1]) {
@@ -59,5 +72,7 @@ $(function () {
       " am - " + ($("#slider-range").slider("values", 1) - 12) + " pm");
   });
 });
+
+// TODO: add function to display/hide time block
 
 

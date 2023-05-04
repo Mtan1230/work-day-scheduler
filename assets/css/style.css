@@ -18,6 +18,7 @@ textarea {
 
 .time-block {
   border-radius: 15px;
+  color: white;
 }
 
 .row {
@@ -30,19 +31,16 @@ textarea {
   border-top: 1px dashed #000000;
 }
 
-.past {
+.time-block[data-tense="past"] {
   background-color: #d3d3d3;
-  color: white;
 }
 
-.present {
+.time-block[data-tense="current"] {
   background-color: #ff6961;
-  color: white;
 }
 
-.future {
+.time-block[data-tense="future"] {
   background-color: #77dd77;
-  color: white;
 }
 
 .saveBtn {
