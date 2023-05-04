@@ -63,3 +63,8 @@ textarea {
     width: 50%;
     margin: 0 auto;
 }
+
+/* hide unselected time block */
+.time-block[data-state="hidden"] {
+  display: none;
+}
