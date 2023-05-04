@@ -76,6 +76,11 @@ $(function () {
 
 // TODO: add function to display/hide time block
 
-// TODO: add listener to save all and clear all
-
+//add listener to save all and clear all
+const clearAllBtn = $('#clearAllBtn');
+clearAllBtn.on('click', function () {
+  $('.description').each(function () {
+    $(this).val('');
+  })
+})
 
