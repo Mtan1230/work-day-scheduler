@@ -2,7 +2,7 @@ $(function () {
   //display the current date and time dynamically in the header of the page.
   const currentDay = $('#currentDay').text(dayjs().format('MMM D, YYYY h:mm:ss a'));
   setInterval(function () {
-      currentDay.text(dayjs().format('MMM D, YYYY h:mm:ss a'))
+    currentDay.text(dayjs().format('MMM D, YYYY h:mm:ss a'))
   }, 1000);
 
   console.log(dayjs().format('h a'));
@@ -24,6 +24,27 @@ $(function () {
   // the values of the corresponding textarea elements. HINT: How can the id
   // attribute of each time-block be used to do this?
   //
+
+  //function of slider
+  $(function () {
+    $("#slider-range").slider({
+      range: true,
+      min: 0,
+      max: 24,
+      values: [9, 17],
+      slide: function (event, ui) {
+        if (ui.values[0] == ui.values[1]) {
+          $("#hours").val("");
+        } else {
+          const a = dayjs('2023-05-04' + ui.values[0] + ':00:00').format('h a');
+          const b = dayjs('2023-05-04' + ui.values[1] + ':00:00').format('h a');
+          $("#hours").val(a + " - " + b);
+        }
+      }
+    });
+    $("#hours").val($("#slider-range").slider("values", 0) +
+      " am - " + ($("#slider-range").slider("values", 1) - 12) + " pm");
+  });
 });
 
 
