@@ -1,18 +1,15 @@
 $(function () {
-  const defaultSchedule = {
+  let defaultSchedule = {
     startTime: 9,
     endTime: 17,
-    list: []
+    list: ['', '', '', '', '', '', '', '', ''],
   };
-  const todo = " ";
-  for (let i = 0; i <= defaultSchedule.endTime - defaultSchedule.startTime; i++) {
-    defaultSchedule.list.push(todo)
-  }
 
   //load local storage and set the values of the corresponding textarea
   const saveSchedule = JSON.parse(localStorage.getItem("saveSchedule"));
   if (saveSchedule) {
-    $(saveSchedule.list).each(function(index) {
+    defaultSchedule = saveSchedule;
+    $(defaultSchedule.list).each(function(index) {
       $('#' + (index + defaultSchedule.startTime)).children().eq(1).val(this)
     })
   }
@@ -50,6 +47,7 @@ $(function () {
   saveBtn.on('click', function () {
     defaultSchedule.list[$(this).parent().attr('id') - defaultSchedule.startTime] = $(this).parent().children().eq(1).val();
     localStorage.setItem("saveSchedule", JSON.stringify(defaultSchedule));
+    console.log(defaultSchedule.list)
   })
 
   //function of slider
@@ -72,15 +70,21 @@ $(function () {
     $("#hours").val($("#slider-range").slider("values", 0) +
       " am - " + ($("#slider-range").slider("values", 1) - 12) + " pm");
   });
-});
-
-// TODO: add function to display/hide time block
-
-//add listener to save all and clear all
-const clearAllBtn = $('#clearAllBtn');
-clearAllBtn.on('click', function () {
-  $('.description').each(function () {
-    $(this).val('');
+  // TODO: add function to display/hide time block
+  
+  //add listener to save all and clear all
+  const clearAllBtn = $('#clearAllBtn');
+  clearAllBtn.on('click', function () {
+    $('.description').each(function () {
+      $(this).val('');
+    })
   })
-})
-
+  
+  const saveAllBtn = $('#saveAllBtn');
+  saveAllBtn.on('click', function () {
+    defaultSchedule.list.foreach(function (work) {
+      console.log(work) 
+    })
+  })
+  
+});
