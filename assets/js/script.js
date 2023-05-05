@@ -1,54 +1,93 @@
 $(function () {
+  //global variable
+  const timeBlock = $('.time-block');
+  const workList = $('.description');
+  const currentDay = $('#currentDay');
+  const saveBtn = $('.saveBtn');
+  const saveAllBtn = $('#saveAllBtn');
+  const clearAllBtn = $('#clearAllBtn');
+
   let defaultSchedule = {
-    startTime: 9,
-    endTime: 17,
-    list: ['', '', '', '', '', '', '', '', ''],
+    startHour: 9,
+    endHour: 17,
+    list: Array(24).fill('')
   };
+  let staticHour = dayjs().format('HH') * 1; //convert string to number
 
   //load local storage and set the values of the corresponding textarea
-  const saveSchedule = JSON.parse(localStorage.getItem("saveSchedule"));
-  if (saveSchedule) {
-    defaultSchedule = saveSchedule;
-    $(defaultSchedule.list).each(function(index) {
-      $('#' + (index + defaultSchedule.startTime)).children().eq(1).val(this)
-    })
+  function loadStorage() {
+    const saveSchedule = JSON.parse(localStorage.getItem("saveSchedule"));
+    if (saveSchedule) {
+      defaultSchedule = saveSchedule;
+      $(defaultSchedule.list).each(function (index) {
+        $(workList[index]).val(this);
+      })
+    }
   }
+  loadStorage();
 
   //set the color of each time block
-  let staticHour = dayjs().format('HH') * 1; //convert string to number
   function setColor() {
     for (let i = staticHour - 1; i >= 0; i--) {
-      $('#' + i).attr('data-tense', 'past');
+      $(timeBlock[i]).attr('data-tense', 'past');
     }
 
-    $('#' + staticHour).attr('data-tense', 'current');
+    $(timeBlock[staticHour]).attr('data-tense', 'current');
 
     for (let i = staticHour + 1; i <= 23; i++) {
-      $('#' + i).attr('data-tense', 'future');
+      $(timeBlock[i]).attr('data-tense', 'future');
     }
   }
   setColor();
 
   //display current date/time and update color dynamically
-  const currentDay = $('#currentDay').text(dayjs().format('MMM D, YYYY h:mm:ss a'));
-  setInterval(function () {
-    currentDay.text(dayjs().format('MMM D, YYYY h:mm:ss a'))
+  function setDateTime() {
+    currentDay.text(dayjs().format('MMM D, YYYY h:mm:ss a'));
+    setInterval(function () {
+      currentDay.text(dayjs().format('MMM D, YYYY h:mm:ss a'))
+      //when hour changes, re-set color
+      let dynamicHour = dayjs().format('HH') * 1;
+      if (dynamicHour !== staticHour) {
+        staticHour = dynamicHour;
+        setColor();
+      }
+    }, 1000);
+  }
+  setDateTime();
 
-    //when hour changes, re-set color
-    let dynamicHour = dayjs().format('HH') * 1;
-    if (dynamicHour !== staticHour) {
-      staticHour = dynamicHour;
-      setColor();
-    }
-  }, 1000);
-
-  //add event-listener to save description in local storage
-  const saveBtn = $('.saveBtn');
+  //add listener to each save-button on time-block and update local storage
   saveBtn.on('click', function () {
-    defaultSchedule.list[$(this).parent().attr('id') - defaultSchedule.startTime] = $(this).parent().children().eq(1).val();
+    let index = $(this).parent().attr('id') * 1;
+    defaultSchedule.list[index] = $(this).parent().children().eq(1).val();
     localStorage.setItem("saveSchedule", JSON.stringify(defaultSchedule));
-    console.log(defaultSchedule.list)
   })
+
+  //add listener to save all and update local storage
+  saveAllBtn.on('click', function () {
+    $(defaultSchedule.list).each(function (index) {
+      defaultSchedule.list[index] = $(workList[index]).val();
+    })
+    localStorage.setItem("saveSchedule", JSON.stringify(defaultSchedule));
+  })
+
+  //add listener to clear all works on the page (will not clear local storage)
+  clearAllBtn.on('click', function () {
+    workList.val('');
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //function of slider
   $(function () {
@@ -71,20 +110,4 @@ $(function () {
       " am - " + ($("#slider-range").slider("values", 1) - 12) + " pm");
   });
   // TODO: add function to display/hide time block
-  
-  //add listener to save all and clear all
-  const clearAllBtn = $('#clearAllBtn');
-  clearAllBtn.on('click', function () {
-    $('.description').each(function () {
-      $(this).val('');
-    })
-  })
-  
-  const saveAllBtn = $('#saveAllBtn');
-  saveAllBtn.on('click', function () {
-    defaultSchedule.list.foreach(function (work) {
-      console.log(work) 
-    })
-  })
-  
 });
