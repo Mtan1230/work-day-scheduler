@@ -26,6 +26,12 @@ $(function () {
   }
   loadStorage();
 
+  //display/hide time block
+  function setTimeBlock() {
+    
+  }
+  setTimeBlock();
+
   //set the color of each time block
   function setColor() {
     for (let i = staticHour - 1; i >= 0; i--) {
@@ -75,39 +81,43 @@ $(function () {
     workList.val('');
   })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   //function of slider
   $(function () {
     $("#slider-range").slider({
       range: true,
       min: 0,
       max: 23,
-      values: [defaultSchedule.startTime, defaultSchedule.endTime],
+      values: [defaultSchedule.startHour, defaultSchedule.endHour],
       slide: function (event, ui) {
+        //display selected time frame
+        const a = dayjs('2023-05-04' + ui.values[0] + ':00:00').format('h a');
+        const b = dayjs('2023-05-04' + ui.values[1] + ':00:00').format('h a');
         if (ui.values[0] == ui.values[1]) {
-          $("#hours").val("");
+          $("#hours").val(a);
         } else {
-          const a = dayjs('2023-05-04' + ui.values[0] + ':00:00').format('h a');
-          const b = dayjs('2023-05-04' + ui.values[1] + ':00:00').format('h a');
           $("#hours").val(a + " - " + b);
+        }
+        //display or hide time block
+        switch (true) {
+          case ui.values[0] < defaultSchedule.startHour:
+            $('#' + ui.values[0]).attr('data-state', 'display');
+            defaultSchedule.startHour = ui.values[0];
+            break;
+          case ui.values[0] > defaultSchedule.startHour:
+            $('#' + defaultSchedule.startHour).attr('data-state', 'hidden');
+            defaultSchedule.startHour = ui.values[0];
+            break;
+          case ui.values[1] < defaultSchedule.endHour:
+            $('#' + defaultSchedule.endHour).attr('data-state', 'hidden');
+            defaultSchedule.endHour = ui.values[1];
+            break;
+          case ui.values[1] > defaultSchedule.endHour:
+            $('#' + ui.values[1]).attr('data-state', 'display');
+            defaultSchedule.endHour = ui.values[1];
+            break;
         }
       }
     });
-    $("#hours").val($("#slider-range").slider("values", 0) +
-      " am - " + ($("#slider-range").slider("values", 1) - 12) + " pm");
+    $("#hours").val(dayjs('2023-05-04' + defaultSchedule.startHour + ':00:00').format('h a') + " - " + dayjs('2023-05-04' + defaultSchedule.endHour + ':00:00').format('h a'));
   });
-  // TODO: add function to display/hide time block
 });
