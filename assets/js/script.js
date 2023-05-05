@@ -28,7 +28,9 @@ $(function () {
 
   //display/hide time block
   function setTimeBlock() {
-    
+    for (let i = defaultSchedule.startHour; i <= defaultSchedule.endHour; i++) {
+      $('#' + i).attr('data-state', 'display');
+    }
   }
   setTimeBlock();
 
